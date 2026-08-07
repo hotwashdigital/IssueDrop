@@ -1,0 +1,22 @@
+<Window x:Class="IssueDrop.Views.PickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Choose" Width="410" Height="440" WindowStyle="None" AllowsTransparency="True"
+        Background="{DynamicResource TransparentBrush}" Foreground="{DynamicResource TextPrimaryBrush}" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True"
+        Deactivated="Window_Deactivated" PreviewKeyDown="Window_PreviewKeyDown">
+  <Border Margin="12" CornerRadius="11" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="10">
+    <Border.Effect><DropShadowEffect BlurRadius="18" ShadowDepth="5" Opacity="0.35" Color="{DynamicResource ShadowColor}"/></Border.Effect>
+    <Grid>
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <TextBox x:Name="SearchBox" Grid.Row="0" Style="{StaticResource ComposerTextBox}" Background="{DynamicResource InputBackgroundBrush}" Padding="10,8" FontSize="14"
+               TextChanged="SearchBox_TextChanged"/>
+      <ListBox x:Name="ItemsList" Grid.Row="1" Margin="0,8,0,0" SelectionMode="Single" MouseDoubleClick="ItemsList_MouseDoubleClick" KeyDown="ItemsList_KeyDown" SelectionChanged="ItemsList_SelectionChanged">
+        <ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Display}" TextTrimming="CharacterEllipsis"/></DataTemplate></ListBox.ItemTemplate>
+      </ListBox>
+      <DockPanel Grid.Row="2" Margin="0,8,0,0">
+        <TextBlock x:Name="HintText" Text="Enter to choose · Esc to close" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center"/>
+        <Button x:Name="PinButton" DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="☆ Pin" Click="PinButton_Click" Visibility="Collapsed"/>
+      </DockPanel>
+    </Grid>
+  </Border>
+</Window>

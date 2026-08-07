@@ -1,0 +1,169 @@
+<Window x:Class="IssueDrop.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="IssueDrop" Width="700" MinHeight="146" MaxHeight="720"
+        SizeToContent="Height" WindowStyle="None" AllowsTransparency="True"
+        Background="{DynamicResource TransparentBrush}" Foreground="{DynamicResource TextPrimaryBrush}" ResizeMode="NoResize" ShowInTaskbar="False"
+        Topmost="True" UseLayoutRounding="True" SnapsToDevicePixels="True"
+        PreviewKeyDown="Window_PreviewKeyDown">
+  <Border x:Name="Shell" Margin="18" CornerRadius="13" Background="{DynamicResource WindowBackgroundBrush}"
+          BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" AllowDrop="True"
+          DragEnter="Shell_DragEnter" Drop="Shell_Drop">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="24" ShadowDepth="8" Direction="270" Opacity="0.38" Color="{DynamicResource ShadowColor}"/>
+    </Border.Effect>
+    <Grid>
+      <Grid x:Name="ComposerPanel">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border x:Name="AuthBanner" Grid.Row="0" Visibility="Collapsed" Background="{DynamicResource DangerSurfaceBrush}" CornerRadius="12,12,0,0" Padding="14,9">
+          <DockPanel>
+            <Button DockPanel.Dock="Right" Style="{StaticResource GhostButton}" Content="Refresh" Click="RefreshAuth_Click"/>
+            <TextBlock x:Name="AuthText" Foreground="{DynamicResource DangerBrush}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+          </DockPanel>
+        </Border>
+
+        <ItemsControl x:Name="AttachmentList" Grid.Row="1" Margin="16,13,16,0" Visibility="Collapsed">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                      CornerRadius="8" Margin="0,0,8,7" Padding="5" MaxWidth="210">
+                <Grid>
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                  <Border Grid.Column="0" Width="36" Height="36" CornerRadius="5" Background="{DynamicResource ElevatedSurfaceBrush}" ClipToBounds="True">
+                    <Grid>
+                      <Image x:Name="Thumb" Source="{Binding LocalPath, Converter={StaticResource ImagePathConverter}}" Stretch="UniformToFill"/>
+                      <TextBlock x:Name="FileGlyph" Text="▤" FontSize="19" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"/>
+                    </Grid>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="8,0,5,0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding FileName}" TextTrimming="CharacterEllipsis" FontSize="12"/>
+                    <TextBlock Text="{Binding SizeText}" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="10"/>
+                  </StackPanel>
+                  <Button Grid.Column="2" Content="×" ToolTip="Remove attachment" Style="{StaticResource GhostButton}" Padding="5,2" Tag="{Binding}" Click="RemoveAttachment_Click"/>
+                </Grid>
+              </Border>
+              <DataTemplate.Triggers>
+                  <DataTrigger Binding="{Binding IsImage}" Value="False">
+                    <Setter TargetName="Thumb" Property="Visibility" Value="Collapsed"/>
+                    <Setter TargetName="FileGlyph" Property="Visibility" Value="Visible"/>
+                  </DataTrigger>
+              </DataTemplate.Triggers>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <Grid Grid.Row="2" Margin="20,17,20,11">
+          <TextBox x:Name="TitleBox" Style="{StaticResource ComposerTextBox}" FontSize="19" MinHeight="30"
+                   MaxLength="256" TextChanged="TitleBox_TextChanged" PreviewKeyDown="TitleBox_PreviewKeyDown"/>
+          <TextBlock x:Name="TitlePlaceholder" Text="What needs attention?" FontSize="19" Foreground="{DynamicResource TextSecondaryBrush}"
+                     IsHitTestVisible="False" VerticalAlignment="Center"/>
+        </Grid>
+
+        <Grid x:Name="BodySection" Grid.Row="3" Margin="20,0,20,8">
+          <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+            <Grid>
+              <TextBox x:Name="BodyBox" Style="{StaticResource ComposerTextBox}" AcceptsReturn="True" TextWrapping="Wrap"
+                       VerticalContentAlignment="Top" MinHeight="106" MaxHeight="290" VerticalScrollBarVisibility="Auto"
+                       FontSize="14" TextChanged="BodyBox_TextChanged"/>
+              <TextBlock x:Name="BodyPlaceholder" Text="Add context, steps, links, or paste an image…" FontSize="14"
+                         Foreground="{DynamicResource TextSecondaryBrush}" IsHitTestVisible="False" VerticalAlignment="Top"/>
+            </Grid>
+          </Border>
+        </Grid>
+
+        <Border x:Name="MorePanel" Grid.Row="4" Margin="14,0,14,8" Padding="12" CornerRadius="9"
+                Background="{DynamicResource SurfaceBrush}" Visibility="Collapsed">
+          <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition/></Grid.ColumnDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="9"/><RowDefinition Height="Auto"/><RowDefinition Height="9"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0">
+              <TextBlock Text="Milestone" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="1,0,0,4"/>
+              <ComboBox x:Name="MilestoneCombo" DisplayMemberPath="Title" SelectionChanged="MilestoneCombo_SelectionChanged"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2">
+              <TextBlock Text="Project" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="1,0,0,4"/>
+              <ComboBox x:Name="ProjectCombo" DisplayMemberPath="Title" SelectionChanged="ProjectCombo_SelectionChanged"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="0">
+              <TextBlock Text="Issue template" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="1,0,0,4"/>
+              <ComboBox x:Name="TemplateCombo" DisplayMemberPath="Name" SelectionChanged="TemplateCombo_SelectionChanged"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="2">
+              <TextBlock Text="Parent issue (number or URL)" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="1,0,0,4"/>
+              <TextBox x:Name="ParentIssueBox" Style="{StaticResource ComposerTextBox}" FontSize="13" Background="{DynamicResource InputBackgroundBrush}"
+                       Padding="8,6" TextChanged="ParentIssueBox_TextChanged"/>
+            </StackPanel>
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+              <TextBlock Text="Markdown" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="1,0,0,4"/>
+              <Button Style="{StaticResource GhostButton}" HorizontalContentAlignment="Left" Content="Preview issue body" Click="Preview_Click"/>
+            </StackPanel>
+          </Grid>
+        </Border>
+
+        <Grid Grid.Row="5" Margin="12,2,12,12">
+          <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Orientation="Horizontal">
+            <Button x:Name="RepoButton" Style="{StaticResource GhostButton}" Foreground="{DynamicResource AccentBrush}" Click="RepoButton_Click" ToolTip="Repository"><TextBlock><Run Text="▣  "/><Run x:Name="RepoButtonText" Text="Repository"/></TextBlock></Button>
+            <Button x:Name="TypeButton" Style="{StaticResource GhostButton}" Click="TypeButton_Click" ToolTip="Issue type"><TextBlock><Run Text="⚑  "/><Run x:Name="TypeButtonText" Text="Type"/></TextBlock></Button>
+            <Button x:Name="LabelsButton" Style="{StaticResource GhostButton}" Click="LabelsButton_Click" ToolTip="Labels"><TextBlock><Run Text="◇  "/><Run x:Name="LabelsButtonText" Text="Labels"/></TextBlock></Button>
+            <Button x:Name="AssigneeButton" Style="{StaticResource GhostButton}" Click="AssigneeButton_Click" ToolTip="Assignees"><TextBlock><Run Text="♙  "/><Run x:Name="AssigneeButtonText" Text="Assignee"/></TextBlock></Button>
+            <Button Style="{StaticResource GhostButton}" Content="📎" ToolTip="Attach files" Click="AttachButton_Click"/>
+            <Button x:Name="DraftsButton" Style="{StaticResource GhostButton}" Content="▤" ToolTip="Saved drafts" Click="DraftsButton_Click"/>
+            <Button x:Name="MoreButton" Style="{StaticResource GhostButton}" Content="•••" ToolTip="More fields" Click="MoreButton_Click"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal">
+            <TextBlock x:Name="StatusText" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <Button x:Name="SubmitButton" Style="{StaticResource PrimaryButton}" Content="Add" Click="SubmitButton_Click"/>
+          </StackPanel>
+        </Grid>
+      </Grid>
+
+      <Border x:Name="SuccessPanel" Visibility="Collapsed" CornerRadius="13" Background="{DynamicResource WindowBackgroundBrush}" Padding="20,18">
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <Border Width="38" Height="38" CornerRadius="19" Background="{DynamicResource SuccessSurfaceBrush}"><TextBlock Text="✓" Foreground="{DynamicResource SuccessBrush}" FontSize="21" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+          <StackPanel Grid.Column="1" Margin="13,0,16,0" VerticalAlignment="Center">
+            <TextBlock Text="Issue created" FontSize="16" FontWeight="SemiBold"/>
+            <TextBlock x:Name="SuccessRepositoryText" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button Style="{StaticResource GhostButton}" Content="Copy link" Click="CopyLink_Click"/>
+            <Button Style="{StaticResource PrimaryButton}" Content="Open" Click="OpenIssue_Click"/>
+            <Button Style="{StaticResource GhostButton}" Content="New" Click="NewIssue_Click"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Border x:Name="BusyOverlay" Visibility="Collapsed" CornerRadius="13" Background="{DynamicResource OverlayBrush}">
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+          <ProgressBar IsIndeterminate="True" Width="170" Height="3"/>
+          <TextBlock x:Name="BusyText" Text="Working…" HorizontalAlignment="Center" Margin="0,9,0,0"/>
+        </StackPanel>
+      </Border>
+
+      <Popup x:Name="TokenPopup" PlacementTarget="{Binding ElementName=TitleBox}" Placement="Bottom" VerticalOffset="6"
+             AllowsTransparency="True" StaysOpen="False" Focusable="False">
+        <Border Width="360" MaxHeight="260" CornerRadius="9" Background="{DynamicResource WindowBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" Padding="6">
+          <Border.Effect><DropShadowEffect BlurRadius="16" ShadowDepth="5" Opacity="0.35" Color="{DynamicResource ShadowColor}"/></Border.Effect>
+          <ListBox x:Name="TokenList" DisplayMemberPath="Display" MouseLeftButtonUp="TokenList_MouseLeftButtonUp"/>
+        </Border>
+      </Popup>
+    </Grid>
+  </Border>
+
+</Window>

@@ -1,0 +1,11 @@
+<Window x:Class="IssueDrop.Views.MarkdownPreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Issue preview" Width="620" Height="620" Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}" WindowStyle="ToolWindow" ShowInTaskbar="False">
+  <Grid Margin="22">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="12"/><RowDefinition/></Grid.RowDefinitions>
+    <TextBlock x:Name="TitleText" FontSize="24" FontWeight="SemiBold" TextWrapping="Wrap"/>
+    <FlowDocumentScrollViewer Grid.Row="2" x:Name="Viewer" Background="{DynamicResource TransparentBrush}" Foreground="{DynamicResource TextPrimaryBrush}" BorderThickness="0" VerticalScrollBarVisibility="Auto"/>
+  </Grid>
+</Window>

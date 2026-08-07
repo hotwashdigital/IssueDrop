@@ -1,0 +1,27 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Every key mirrors Dark.xaml; control styles never contain palette colors. -->
+  <SolidColorBrush x:Key="TransparentBrush" Color="#00000000"/>
+  <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FAFAFA"/>
+  <SolidColorBrush x:Key="SurfaceBrush" Color="#F1F1F1"/>
+  <SolidColorBrush x:Key="ElevatedSurfaceBrush" Color="#E7E7E7"/>
+  <SolidColorBrush x:Key="InputBackgroundBrush" Color="#EDEDED"/>
+  <SolidColorBrush x:Key="TextPrimaryBrush" Color="#171717"/>
+  <SolidColorBrush x:Key="TextSecondaryBrush" Color="#535353"/>
+  <SolidColorBrush x:Key="TextDisabledBrush" Color="#929292"/>
+  <SolidColorBrush x:Key="BorderBrush" Color="#CBCBCB"/>
+  <SolidColorBrush x:Key="AccentBrush" Color="#397CC8"/>
+  <SolidColorBrush x:Key="AccentHoverBrush" Color="#286AB5"/>
+  <SolidColorBrush x:Key="TextOnAccentBrush" Color="#FFFFFF"/>
+  <SolidColorBrush x:Key="DangerBrush" Color="#A62931"/>
+  <SolidColorBrush x:Key="DangerSurfaceBrush" Color="#F9E1E3"/>
+  <SolidColorBrush x:Key="SuccessBrush" Color="#176C39"/>
+  <SolidColorBrush x:Key="SuccessSurfaceBrush" Color="#DDF3E5"/>
+  <SolidColorBrush x:Key="OverlayBrush" Color="#8AFFFFFF"/>
+  <SolidColorBrush x:Key="SelectionBrush" Color="#40397CC8"/>
+  <SolidColorBrush x:Key="TextOnSelectionBrush" Color="#FFFFFFFF"/>
+  <SolidColorBrush x:Key="CodeBackgroundBrush" Color="#EBEEF2"/>
+  <SolidColorBrush x:Key="ScrollBarTrackBrush" Color="#E8E8E8"/>
+  <SolidColorBrush x:Key="ScrollBarThumbBrush" Color="#9B9B9B"/>
+  <Color x:Key="ShadowColor">#55000000</Color>
+</ResourceDictionary>

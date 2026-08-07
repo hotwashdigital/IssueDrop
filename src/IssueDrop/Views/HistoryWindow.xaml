@@ -1,0 +1,41 @@
+<Window x:Class="IssueDrop.Views.HistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="IssueDrop drafts and history" Width="780" Height="600"
+        MinWidth="640" MinHeight="420" Background="{DynamicResource WindowBackgroundBrush}"
+        Foreground="{DynamicResource TextPrimaryBrush}" WindowStartupLocation="CenterScreen">
+  <Grid Margin="24">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
+    <DockPanel>
+      <TextBlock Text="Drafts &amp; history" FontSize="24" FontWeight="SemiBold"/>
+      <TextBlock x:Name="CountText" DockPanel.Dock="Right" Foreground="{DynamicResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+    </DockPanel>
+    <TextBox x:Name="SearchBox" Grid.Row="1" Style="{StaticResource ComposerTextBox}" Background="{DynamicResource InputBackgroundBrush}" Padding="11,9"
+             Margin="0,18,0,13" TextChanged="SearchBox_TextChanged" ToolTip="Search title, body, or repository"/>
+    <ListBox x:Name="HistoryList" Grid.Row="2" Background="{DynamicResource TransparentBrush}" BorderThickness="0" MouseDoubleClick="HistoryList_MouseDoubleClick">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="6,12">
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+              <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock Text="{Binding DisplayTitle}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="480"/>
+                  <Border Background="{DynamicResource SurfaceBrush}" CornerRadius="5" Padding="6,2" Margin="8,0,0,0"><TextBlock Text="{Binding State}" FontSize="10" Foreground="{DynamicResource TextSecondaryBrush}"/></Border>
+                </StackPanel>
+                <TextBlock Margin="0,5,0,0" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12">
+                  <Run Text="{Binding DisplayRepository}"/><Run Text="  ·  "/><Run Text="{Binding UpdatedAt, StringFormat={}{0:g}}"/>
+                </TextBlock>
+                <TextBlock Text="{Binding LastError}" Foreground="{DynamicResource DangerBrush}" FontSize="11" TextTrimming="CharacterEllipsis" MaxWidth="520"/>
+              </StackPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Style="{StaticResource GhostButton}" Content="Open" Tag="{Binding}" Click="Open_Click"/>
+                <Button Style="{StaticResource GhostButton}" Content="Delete" Tag="{Binding}" Click="Delete_Click"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Grid>
+</Window>

@@ -1,0 +1,57 @@
+# Build, publish, and test output
+**/[Bb]in/
+**/[Oo]bj/
+/artifacts/
+/publish/
+/TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+coverage.*
+
+# Locally downloaded SDKs, packages, and helper tools
+/.tools/
+/.dotnet/
+/.nuget/
+/packages/
+
+# Visual Studio, VS Code, Rider, and user-specific project state
+/.vs/
+/.vscode/
+/.idea/
+*.suo
+*.user
+*.rsuser
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# Local IssueDrop runtime data (normally stored under %LocalAppData%\IssueDrop)
+/settings.json
+/drafts.json
+/repository-cache.json
+/issuedrop.log
+/attachments/
+
+# Local secrets, environment overrides, and signing material
+.env
+.env.*
+!.env.example
+secrets.json
+appsettings.*.local.json
+*.pfx
+*.snk
+*.pubxml.user
+
+# Logs, temporary files, and operating-system metadata
+*.log
+*.tmp
+*.temp
+*.bak
+*.cache
+*.pid
+~$*
+Thumbs.db
+Desktop.ini
+.DS_Store
