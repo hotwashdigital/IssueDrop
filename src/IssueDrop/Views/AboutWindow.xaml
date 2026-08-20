@@ -1,0 +1,36 @@
+<Window x:Class="IssueDrop.Views.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About IssueDrop" Width="430" Height="360" ResizeMode="NoResize"
+        Background="{DynamicResource WindowBackgroundBrush}" Foreground="{DynamicResource TextPrimaryBrush}"
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False">
+  <Grid Margin="28">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel HorizontalAlignment="Center">
+      <Image Source="/IssueDrop;component/Assets/IssueDrop.ico" Width="54" Height="54"/>
+      <TextBlock Text="IssueDrop" FontSize="25" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+      <TextBlock x:Name="VersionText" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Center" Margin="0,3,0,0"/>
+    </StackPanel>
+
+    <StackPanel Grid.Row="1" Margin="0,22,0,0">
+      <TextBlock Text="Keyboard-first GitHub issue capture for Windows."
+                 TextAlignment="Center" TextWrapping="Wrap"/>
+      <TextBlock Text="IssueDrop has no account, server, or telemetry. Authentication stays with GitHub CLI and local drafts stay on this PC."
+                 Foreground="{DynamicResource TextSecondaryBrush}" TextAlignment="Center" TextWrapping="Wrap" Margin="14,10"/>
+      <TextBlock Text="Released under the MIT License."
+                 Foreground="{DynamicResource TextSecondaryBrush}" TextAlignment="Center" Margin="0,4,0,0"/>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+        <Button Style="{StaticResource GhostButton}" Content="View project" Click="Project_Click" Margin="0,0,8,0"/>
+        <Button Style="{StaticResource GhostButton}" Content="Open data folder" Click="DataFolder_Click"/>
+      </StackPanel>
+    </StackPanel>
+
+    <Button Grid.Row="2" Style="{StaticResource PrimaryButton}" Content="Close" IsCancel="True"
+            HorizontalAlignment="Right" MinWidth="86"/>
+  </Grid>
+</Window>

@@ -21,4 +21,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 & $dotnet run --project (Join-Path $projectRoot 'tests\IssueDrop.Tests\IssueDrop.Tests.csproj') -c Release --no-build
 if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
 
+& $dotnet publish (Join-Path $projectRoot 'src\IssueDrop\IssueDrop.csproj') -c Release -r win-x64 --self-contained true --no-restore -p:PublishSingleFile=true -p:NuGetAudit=false
+if ($LASTEXITCODE -ne 0) { throw 'Publish validation failed.' }
+
 Write-Host 'IssueDrop verification passed.' -ForegroundColor Green

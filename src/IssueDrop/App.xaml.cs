@@ -63,6 +63,7 @@ public partial class App : Application
         _tray.OpenRequested += (_, _) => Dispatcher.Invoke(_composer.ShowFreshComposer);
         _tray.HistoryRequested += (_, _) => Dispatcher.Invoke(OpenHistory);
         _tray.SettingsRequested += (_, _) => Dispatcher.Invoke(OpenSettings);
+        _tray.AboutRequested += (_, _) => Dispatcher.Invoke(OpenAbout);
         _tray.QuitRequested += (_, _) => Dispatcher.Invoke(Shutdown);
 
         if (!e.Args.Contains("--background", StringComparer.OrdinalIgnoreCase))
@@ -97,6 +98,12 @@ public partial class App : Application
         if (_settings is null || _theme is null) return;
         var window = new SettingsWindow(_settings);
         window.SettingsSaved += (_, _) => { _theme.Apply(_settings.Current.Theme); RegisterHotkey(); };
+        window.ShowDialog();
+    }
+
+    private static void OpenAbout()
+    {
+        var window = new AboutWindow();
         window.ShowDialog();
     }
 

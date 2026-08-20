@@ -33,12 +33,12 @@ public partial class MarkdownPreviewWindow : Window
                 inCode = !inCode; continue;
             }
             if (inCode) { code.Add(line); continue; }
-            if (line.StartsWith("### ")) document.Blocks.Add(Heading(line[4..], 16));
-            else if (line.StartsWith("## ")) document.Blocks.Add(Heading(line[3..], 19));
-            else if (line.StartsWith("# ")) document.Blocks.Add(Heading(line[2..], 22));
-            else if (line.StartsWith("- [ ] ")) document.Blocks.Add(new Paragraph(new Run("☐ " + line[6..])) { Margin = new Thickness(8, 2, 0, 2) });
+            if (line.StartsWith("### ", StringComparison.Ordinal)) document.Blocks.Add(Heading(line[4..], 16));
+            else if (line.StartsWith("## ", StringComparison.Ordinal)) document.Blocks.Add(Heading(line[3..], 19));
+            else if (line.StartsWith("# ", StringComparison.Ordinal)) document.Blocks.Add(Heading(line[2..], 22));
+            else if (line.StartsWith("- [ ] ", StringComparison.Ordinal)) document.Blocks.Add(new Paragraph(new Run("☐ " + line[6..])) { Margin = new Thickness(8, 2, 0, 2) });
             else if (line.StartsWith("- [x] ", StringComparison.OrdinalIgnoreCase)) document.Blocks.Add(new Paragraph(new Run("☑ " + line[6..])) { Margin = new Thickness(8, 2, 0, 2) });
-            else if (line.StartsWith("- ")) document.Blocks.Add(new Paragraph(new Run("• " + line[2..])) { Margin = new Thickness(8, 2, 0, 2) });
+            else if (line.StartsWith("- ", StringComparison.Ordinal)) document.Blocks.Add(new Paragraph(new Run("• " + line[2..])) { Margin = new Thickness(8, 2, 0, 2) });
             else document.Blocks.Add(new Paragraph(new Run(line)) { Margin = new Thickness(0, 2, 0, 5) });
         }
         return document;

@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version to build without publishing a GitHub release
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Resolve and validate version
+        id: version
+        shell: pwsh
+        env:
+          MANUAL_VERSION: ${{ inputs.version }}
+        run: |
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            $env:GITHUB_REF_NAME -replace '^v', ''
+          } else {
+            $env:MANUAL_VERSION
+          }
+          if ($version -notmatch '^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$') {
+            throw "Invalid semantic version: $version"
+          }
+          [xml]$props = Get-Content .\Directory.Build.props
+          $versionProperty = $props.Project.PropertyGroup |
+            Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_.Version) } |
+            Select-Object -First 1
+          $projectVersion = ([string]$versionProperty.Version).Trim()
+          if ($projectVersion -ne $version) {
+            throw "Tag/input version $version does not match Directory.Build.props version $projectVersion."
+          }
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Verify build and tests
+        shell: pwsh
+        run: .\scripts\verify.ps1
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --yes --no-progress
+
+      - name: Build release artifacts
+        shell: pwsh
+        run: .\scripts\publish.ps1 -Version '${{ steps.version.outputs.version }}' -RequireInstaller
+
+      - name: Upload workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: IssueDrop-${{ steps.version.outputs.version }}
+          if-no-files-found: error
+          path: |
+            artifacts/IssueDrop-Setup-${{ steps.version.outputs.version }}.exe
+            artifacts/IssueDrop-win-x64.zip
+            artifacts/SHA256SUMS.txt
+
+      - name: Publish GitHub release
+        if: github.ref_type == 'tag'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = '${{ steps.version.outputs.version }}'
+          $arguments = @(
+            'release', 'create', $env:GITHUB_REF_NAME,
+            ".\artifacts\IssueDrop-Setup-$version.exe",
+            '.\artifacts\IssueDrop-win-x64.zip',
+            '.\artifacts\SHA256SUMS.txt',
+            '--verify-tag', '--generate-notes', '--title', "IssueDrop $version"
+          )
+          if ($version.Contains('-')) { $arguments += '--prerelease' }
+          & gh @arguments
+          if ($LASTEXITCODE -ne 0) { throw 'GitHub release creation failed.' }

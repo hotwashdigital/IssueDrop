@@ -30,7 +30,7 @@ public sealed partial class GitHubService
 
     public async Task<IReadOnlyList<RepositoryInfo>> GetRepositoriesAsync(bool forceRefresh = false, CancellationToken cancellationToken = default)
     {
-        var cache = await JsonFile.ReadAsync(AppPaths.CacheFile, new RepositoryCache());
+        var cache = await JsonFile.ReadAsync(AppPaths.CacheFile, new RepositoryCache(), cancellationToken);
         if (!forceRefresh && cache.Repositories.Count > 0 && cache.UpdatedAt > DateTimeOffset.Now.AddMinutes(-15))
             return cache.Repositories;
 
@@ -64,7 +64,8 @@ public sealed partial class GitHubService
         repositories = repositories.Where(r => r.CanPush && !r.IsArchived)
             .DistinctBy(r => r.NameWithOwner, StringComparer.OrdinalIgnoreCase)
             .OrderByDescending(r => r.PushedAt).ToList();
-        await JsonFile.WriteAsync(AppPaths.CacheFile, new RepositoryCache { UpdatedAt = DateTimeOffset.Now, Repositories = repositories });
+        await JsonFile.WriteAsync(AppPaths.CacheFile,
+            new RepositoryCache { UpdatedAt = DateTimeOffset.Now, Repositories = repositories }, cancellationToken);
         return repositories;
     }
 

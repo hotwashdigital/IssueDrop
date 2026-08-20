@@ -1,35 +1,57 @@
 # IssueDrop
 
-IssueDrop is a keyboard-first Windows 11 utility for creating GitHub issues without leaving your current application. Press `Alt+Space`, capture the issue, and press `Ctrl+Enter` to submit.
+[![CI](https://github.com/hotwashdigital/IssueDrop/actions/workflows/ci.yml/badge.svg)](https://github.com/hotwashdigital/IssueDrop/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-The app is a native, borderless WPF tray utility inspired by TickTick's quick-add experience. It uses the existing [GitHub CLI](https://cli.github.com/) login and stores drafts locally. There is no IssueDrop account, server, or telemetry.
+IssueDrop is a keyboard-first Windows 11 utility for creating GitHub issues
+without leaving your current application. Press `Alt+Space`, capture the issue,
+and press `Ctrl+Enter` to submit.
 
-The composer stays visible and topmost while you switch applications, take screenshots, use the clipboard, or cancel a file picker. Only an explicit `Escape` dismisses an unfinished entry. Repository-field pickers close when you click elsewhere without dismissing the composer.
+It is a native WPF tray app that uses your existing
+[GitHub CLI](https://cli.github.com/) login. There is no IssueDrop account,
+server, or telemetry, and GitHub tokens are never stored by the app.
 
-## Run it
+## Install
 
 1. Install GitHub CLI and run `gh auth login` once.
-2. Open `IssueDrop.exe` from the `IssueDrop-win-x64` release folder.
-3. Press `Alt+Space` from anywhere. Every shortcut invocation starts a fresh issue; unfinished work remains available from the inline **Drafts** button. If another app already owns that shortcut, open IssueDrop from the tray and choose another shortcut in **Settings**.
+2. Download `IssueDrop-Setup-<version>.exe` from the
+   [latest release](https://github.com/hotwashdigital/IssueDrop/releases/latest).
+3. Run Setup, launch IssueDrop, and press `Alt+Space` from any app.
 
-The release is self-contained. .NET does not need to be installed. IssueDrop registers itself to start with Windows on first launch; this can be disabled in Settings.
+Setup installs IssueDrop for the current user, so administrator access is not
+required. It adds a Start menu shortcut and offers an optional desktop shortcut.
+IssueDrop starts with Windows by default; change that behavior in **Settings**.
 
-## What it supports
+Every release also includes a portable `IssueDrop-win-x64.zip`. Extract the
+complete folder and run `IssueDrop.exe`; the .NET runtime does not need to be
+installed. Verify either download against the included `SHA256SUMS.txt` if
+desired.
 
-- Fast capture with the Markdown description ready immediately and advanced fields collapsed
+> IssueDrop release binaries are not yet Authenticode-signed. Windows may show
+> an “Unknown publisher” warning until project code signing is configured.
+
+If another app already owns `Alt+Space`, open IssueDrop from the system tray and
+choose a different shortcut in **Settings**.
+
+## Features
+
+- Fast capture with the Markdown description ready immediately and advanced
+  fields collapsed
 - Personal and organization repositories with write access
 - Recent and pinned repositories with searchable selection
 - Labels, multiple assignees, milestones, issue types, projects, and parent issues
-- Markdown issue templates; YAML issue forms open in GitHub because their validation is web-defined
-- Clipboard image paste and drag/drop files with native previews
-- Local draft autosave, an inline draft picker, failure recovery, searchable history, and retention settings
-- Windows light/dark/system themes and configurable global shortcut
+- Markdown issue templates; YAML issue forms open in GitHub because their
+  validation is web-defined
+- Clipboard image paste and drag-and-drop files with native previews
+- Local draft autosave, failure recovery, searchable history, and retention settings
+- Windows light, dark, and system themes with a configurable global shortcut
 - Compact success state with **Copy link**, **Open**, and **New** actions
-- Tray lifecycle and launch-at-login
+- System tray lifecycle and launch at sign-in
 
 ### Quick tokens
 
-Tokens are optional and are only applied when you choose a suggestion, so ordinary `#` and `@` text is never removed accidentally.
+Tokens are optional and are only applied when you choose a suggestion, so
+ordinary `#` and `@` text is never removed accidentally.
 
 | Token | Action |
 |---|---|
@@ -52,13 +74,21 @@ Tokens are optional and are only applied when you choose a suggestion, so ordina
 
 ## Attachments
 
-Pasted images appear as thumbnails and dragged documents appear as removable file chips. Drafts own a durable local copy, so moving the original file does not break the draft.
+Pasted images appear as thumbnails and dragged documents appear as removable
+file chips. Drafts own a durable local copy, so moving the original file does
+not break the draft.
 
-GitHub does not provide its web editor's attachment-upload endpoint through the public issue API. On submission, IssueDrop therefore creates an `issuedrop-assets` branch in the selected repository, uploads files beneath `.issuedrop/<draft-id>/`, and inserts their URLs into the issue body. This keeps assets out of the default branch and preserves repository access controls.
+GitHub does not expose its web editor's attachment upload through the public
+issue API. On submission, IssueDrop creates an `issuedrop-assets` branch in the
+selected repository, uploads files beneath `.issuedrop/<draft-id>/`, and inserts
+their URLs into the issue body. This keeps assets out of the default branch and
+preserves repository access controls.
 
-The GitHub account must have repository contents permission to submit attachments. If uploading or issue creation fails, IssueDrop retains the entire draft and reports the exact error; it never silently drops files.
+The GitHub account must have repository contents permission to submit
+attachments. If upload or issue creation fails, IssueDrop retains the entire
+draft and reports the error; it never silently drops files.
 
-## Local data
+## Local data and privacy
 
 Release data is stored under `%LocalAppData%\IssueDrop`:
 
@@ -68,22 +98,57 @@ Release data is stored under `%LocalAppData%\IssueDrop`:
 - `repository-cache.json` — short-lived GitHub metadata cache
 - `issuedrop.log` — bounded operational log with no tokens or attachment contents
 
-Delete individual drafts/history from the in-app history window. IssueDrop never stores the GitHub token; authentication stays with `gh` and Windows Credential Manager.
+Open the data directory from **About IssueDrop** in the tray menu. Delete
+individual drafts and history in the app, or uninstall IssueDrop and remove this
+directory to erase all remaining local data. Authentication stays with `gh` and
+Windows Credential Manager.
+
+See [SECURITY.md](SECURITY.md) to report a vulnerability privately.
 
 ## Build from source
 
-Requirements: Windows 11, .NET 10 SDK, and GitHub CLI.
+Requirements:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\publish.ps1
-```
+- Windows 11
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [GitHub CLI](https://cli.github.com/)
+- [Inno Setup 6](https://jrsoftware.org/isinfo.php) for the Setup executable
 
-The portable release and ZIP are written to `artifacts`. To run validation:
+Run the full build and test gate:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 ```
 
-The solution intentionally has no third-party application dependencies. WPF, tray integration, JSON persistence, and GitHub process execution use the Windows/.NET platform libraries.
+Build the portable release, checksums, and—when Inno Setup is installed—the
+per-user installer:
 
-All interface colors are semantic resources. See [`docs/THEMING.md`](docs/THEMING.md) to add or adjust a theme without editing control markup.
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\publish.ps1
+```
+
+Artifacts are written to `artifacts`. Use `-RequireInstaller` in release
+automation to fail if the installer cannot be produced.
+
+The application intentionally has no third-party package dependencies. WPF,
+tray integration, JSON persistence, and GitHub process execution use the
+Windows/.NET platform libraries. Self-contained releases include the applicable
+.NET license and third-party notices.
+
+For development guidance, see [CONTRIBUTING.md](CONTRIBUTING.md). All interface
+colors are semantic resources; see [docs/THEMING.md](docs/THEMING.md) before
+changing themes.
+
+## Release process
+
+1. Move completed entries from **Unreleased** in [CHANGELOG.md](CHANGELOG.md).
+2. Set the matching version in `Directory.Build.props`.
+3. Run `scripts\verify.ps1` and `scripts\publish.ps1 -RequireInstaller`.
+4. Merge through CI, then create and push an annotated `v<version>` tag.
+
+The release workflow validates the tag, rebuilds from source, creates the Setup
+executable, portable ZIP, and checksums, then publishes them to GitHub Releases.
+
+## License
+
+IssueDrop is available under the [MIT License](LICENSE).

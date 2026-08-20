@@ -8,8 +8,6 @@
     <RootNamespace>IssueDrop</RootNamespace>
     <Product>IssueDrop</Product>
     <Description>Keyboard-first GitHub issue capture for Windows.</Description>
-    <Version>0.2.3</Version>
-    <FileVersion>0.2.3.0</FileVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\IssueDrop.ico</ApplicationIcon>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using IssueDrop.Models;
@@ -19,7 +20,7 @@ public partial class SettingsWindow : Window
         ThemeCombo.SelectedItem = settings.Current.Theme;
         HotkeyBox.Text = settings.Current.Hotkey;
         StartupCheck.IsChecked = settings.Current.LaunchAtStartup;
-        RetentionBox.Text = settings.Current.HistoryRetentionDays.ToString();
+        RetentionBox.Text = settings.Current.HistoryRetentionDays.ToString(CultureInfo.InvariantCulture);
     }
 
     private void HotkeyBox_PreviewKeyDown(object sender, KeyEventArgs e)

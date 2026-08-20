@@ -1,0 +1,27 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs,csproj,props,targets}]
+indent_style = space
+indent_size = 4
+
+# WPF owns App's lifetime, and the app disposes its native resources in OnExit.
+dotnet_diagnostic.CA1001.severity = none
+# Stateless services intentionally keep instance APIs for composition and testing.
+dotnet_diagnostic.CA1822.severity = none
+# Keep stable collection contracts where concrete return types add no caller value.
+dotnet_diagnostic.CA1859.severity = none
+# Small suggestion arrays favor readable local definitions over shared mutable state.
+dotnet_diagnostic.CA1861.severity = none
+
+[*.{json,yml,yaml,xaml,md}]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false

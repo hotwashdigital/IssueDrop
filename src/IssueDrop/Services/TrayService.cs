@@ -13,6 +13,7 @@ public sealed class TrayService : IDisposable
     public event EventHandler? OpenRequested;
     public event EventHandler? HistoryRequested;
     public event EventHandler? SettingsRequested;
+    public event EventHandler? AboutRequested;
     public event EventHandler? QuitRequested;
 
     public TrayService()
@@ -22,6 +23,7 @@ public sealed class TrayService : IDisposable
         menu.Items.Add("New issue", null, (_, _) => OpenRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add("Drafts & history", null, (_, _) => HistoryRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add("Settings", null, (_, _) => SettingsRequested?.Invoke(this, EventArgs.Empty));
+        menu.Items.Add("About IssueDrop", null, (_, _) => AboutRequested?.Invoke(this, EventArgs.Empty));
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Quit IssueDrop", null, (_, _) => QuitRequested?.Invoke(this, EventArgs.Empty));
 

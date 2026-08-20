@@ -176,6 +176,40 @@ var tests = new List<(string Name, Func<Task> Run)>
                pickerCode.Contains("★ Unpin", StringComparison.Ordinal),
             "The picker refresh must preserve selection and immediately reflect the new pin state");
         return Task.CompletedTask;
+    }),
+    ("Public release metadata and About entry point stay discoverable", () =>
+    {
+        var root = FindRepositoryRoot();
+        var buildProps = File.ReadAllText(Path.Combine(root, "Directory.Build.props"));
+        var tray = File.ReadAllText(Path.Combine(root, "src", "IssueDrop", "Services", "TrayService.cs"));
+        var about = File.ReadAllText(Path.Combine(root, "src", "IssueDrop", "Views", "AboutWindow.xaml.cs"));
+        Assert(Regex.IsMatch(buildProps, "<Version>\\d+\\.\\d+\\.\\d+</Version>", RegexOptions.CultureInvariant),
+            "Public releases must have a stable semantic version");
+        Assert(tray.Contains("About IssueDrop", StringComparison.Ordinal) &&
+               tray.Contains("AboutRequested", StringComparison.Ordinal),
+            "The tray menu must expose application identity and support details");
+        Assert(about.Contains("Assembly.GetEntryAssembly()", StringComparison.Ordinal) &&
+               about.Contains("AppPaths.Root", StringComparison.Ordinal),
+            "About must derive its installed version and provide local-data access");
+        return Task.CompletedTask;
+    }),
+    ("Release packaging remains per-user and produces verifiable artifacts", () =>
+    {
+        var root = FindRepositoryRoot();
+        var installer = File.ReadAllText(Path.Combine(root, "installer", "IssueDrop.iss"));
+        var publish = File.ReadAllText(Path.Combine(root, "scripts", "publish.ps1"));
+        var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", "release.yml"));
+        Assert(installer.Contains("PrivilegesRequired=lowest", StringComparison.Ordinal) &&
+               installer.Contains("{localappdata}\\Programs", StringComparison.Ordinal) &&
+               installer.Contains("AppMutex=Local\\IssueDrop.Singleton", StringComparison.Ordinal),
+            "Setup must install per-user and protect files while IssueDrop is running");
+        Assert(publish.Contains("SHA256SUMS.txt", StringComparison.Ordinal) &&
+               publish.Contains("THIRD-PARTY-NOTICES.txt", StringComparison.Ordinal),
+            "Published downloads must include integrity and redistribution notices");
+        Assert(workflow.Contains("-RequireInstaller", StringComparison.Ordinal) &&
+               workflow.Contains("gh @arguments", StringComparison.Ordinal),
+            "Tagged releases must require Setup and publish through the authenticated GitHub CLI");
+        return Task.CompletedTask;
     })
 };
 
